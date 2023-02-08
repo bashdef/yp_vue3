@@ -30,7 +30,9 @@ Vue.component('create', {
             deadline: null,
             id: 0,
             editable: false,
-            editDate: ''
+            editDate: '',
+            cardReturn: false,
+            reason: null
         }
     },
     methods: {
@@ -44,7 +46,9 @@ Vue.component('create', {
                     description: this.description,
                     deadline: this.deadline,
                     id: this.id,
-                    editable: this.editable
+                    editable: this.editable,
+                    cardReturn: this.cardReturn,
+                    reason: this.reason
                 }
                 eventBus.$emit('create-card', card)
                 this.date = null
@@ -92,7 +96,7 @@ Vue.component('cols', {
                 </div>
             </div>
         </div>
-        <div class="col text-center" @drop="onDrop($event)" @dragenter.prevent @dragover.prevent>
+        <div class="col text-center" @drop="[onDrop($event), onDropCol2($event)]" @dragenter.prevent @dragover.prevent>
             <p>Задачи в работе</p>
             <div v-for="card in col2" class="border border-dark" draggable="true" @dragstart="startDrag($event, card)">
                 <p>Заголовок: {{card.title}}</p>
@@ -100,8 +104,49 @@ Vue.component('cols', {
                 <p>Дата создания: {{card.date}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
                 <p>Дата изменения: {{card.editDate}}</p>
+                <p v-if="card.reason != ''">Причина возврата: {{card.reason}}</p>
+                <div v-if="card.cardReturn == true">
+                    <form @submit.prevent="returnReason">
+                        <div class="mb-3">
+                            <label for="reasonCreating" class="form-label">Причина возврата</label>
+                            <input type="text" v-model="newReason" class="form-control" id="reasonCreating">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success" @click="returnReason(card)">Подтвердить</button>
+                        </div>
+                    </form>
+                </div>
                 <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
-                <button type="submit" class="btn btn-outline-danger" @click="deleteCard(card)">Удалить</button>
+                <div v-if="card.editable == true">
+                    <form @submit.prevent="saveEdit">
+                        <div class="mb-3">
+                            <label for="titleCreating" class="form-label">Заголовок</label>
+                            <input type="text" v-model="newTitle" class="form-control" id="titleCreating">
+                        </div>
+                        <div class="mb-3">
+                            <label for="descriptionCreating" class="form-label">Описание</label>
+                            <textarea id="descriptionCreating" class="form-control" v-model="newDescription"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deadlineCreating" class="form-label">Дэдлайн</label>
+                            <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col text-center" @drop="onDropCol3($event)" @dragenter.prevent @dragover.prevent>
+            <p>Тестирование</p>
+            <div v-for="card in col3" class="border border-dark" draggable="true" @dragstart="startDrag($event, card)">
+                <p>Заголовок: {{card.title}}</p>
+                <p>Описание: {{card.description}}</p>
+                <p>Дата создания: {{card.date}}</p>
+                <p>Дэдлайн: {{card.deadline}}</p>
+                <p>Дата изменения: {{card.editDate}}</p>
+                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
                 <div v-if="card.editable == true">
                     <form @submit.prevent="saveEdit">
                         <div class="mb-3">
@@ -124,9 +169,6 @@ Vue.component('cols', {
             </div>
         </div>
         <div class="col text-center">
-            <p>Тестирование</p>
-        </div>
-        <div class="col text-center">
             <p>Выполненные задачи</p>
         </div>
     </div>     
@@ -140,7 +182,8 @@ Vue.component('cols', {
             newTitle: null,
             newDescription: null,
             newDate: null,
-            newDeadline: null
+            newDeadline: null,
+            newReason: null
         }
     },
     methods: {
@@ -161,6 +204,8 @@ Vue.component('cols', {
                 card.editable = false
                 card.editDate = this.newDate
             }
+            console.log(card.deadline)
+            console.log(card.date)
         },
         startDrag(event, card){
             event.dataTransfer.dropEffect = 'move'
@@ -170,12 +215,41 @@ Vue.component('cols', {
         onDrop(event) {
             let cardID = event.dataTransfer.getData('cardID')
             cardID = Number(cardID)
-            console.log(cardID)
             for(let i in this.col1){
                 if(this.col1[i].id === cardID){
                     this.col2.push(this.col1[i])
-                    console.log(this.col2)
                 }
+                let index = this.col1.findIndex(el => el.id === this.col1[i].id)
+                this.col1.splice(index, 1)
+            }
+        },
+        onDropCol3(event) {
+            let cardID = event.dataTransfer.getData('cardID')
+            cardID = Number(cardID)
+            for(let i in this.col2){
+                if(this.col2[i].id === cardID){
+                    this.col3.push(this.col2[i])
+                }
+                let index = this.col1.findIndex(el => el.id === this.col2[i].id)
+                this.col2.splice(index, 1)
+            }
+        },
+        onDropCol2(event) {
+            let cardID = event.dataTransfer.getData('cardID')
+            cardID = Number(cardID)
+            for(let i in this.col3){
+                if(this.col3[i].id === cardID){
+                    this.col3[i].cardReturn = true
+                    this.col2.push(this.col3[i])
+                }
+                let index = this.col3.findIndex(el => el.id === this.col3[i].id)
+                this.col3.splice(index, 1)
+            }
+        },
+        returnReason(card){
+            if(this.newReason){
+                card.reason = this.newReason
+                card.cardReturn = false
             }
         }
     },
