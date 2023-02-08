@@ -29,7 +29,8 @@ Vue.component('create', {
             description: null,
             deadline: null,
             id: 0,
-            editable: false
+            editable: false,
+            editDate: ''
         }
     },
     methods: {
@@ -62,11 +63,12 @@ Vue.component('cols', {
         <create></create>
         <div class="col text-center">
             <p>Запланированные задачи</p>
-            <div v-for="card in col1" class="border border-dark">
+            <div v-for="card in col1" class="border border-dark" draggable="true" @dragstart="startDrag($event, card)">
                 <p>Заголовок: {{card.title}}</p>
                 <p>Описание: {{card.description}}</p>
                 <p>Дата создания: {{card.date}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
+                <p>Дата изменения: {{card.editDate}}</p>
                 <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
                 <button type="submit" class="btn btn-outline-danger" @click="deleteCard(card)">Удалить</button>
                 <div v-if="card.editable == true">
@@ -90,8 +92,36 @@ Vue.component('cols', {
                 </div>
             </div>
         </div>
-        <div class="col text-center">
+        <div class="col text-center" @drop="onDrop($event)" @dragenter.prevent @dragover.prevent>
             <p>Задачи в работе</p>
+            <div v-for="card in col2" class="border border-dark" draggable="true" @dragstart="startDrag($event, card)">
+                <p>Заголовок: {{card.title}}</p>
+                <p>Описание: {{card.description}}</p>
+                <p>Дата создания: {{card.date}}</p>
+                <p>Дэдлайн: {{card.deadline}}</p>
+                <p>Дата изменения: {{card.editDate}}</p>
+                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
+                <button type="submit" class="btn btn-outline-danger" @click="deleteCard(card)">Удалить</button>
+                <div v-if="card.editable == true">
+                    <form @submit.prevent="saveEdit">
+                        <div class="mb-3">
+                            <label for="titleCreating" class="form-label">Заголовок</label>
+                            <input type="text" v-model="newTitle" class="form-control" id="titleCreating">
+                        </div>
+                        <div class="mb-3">
+                            <label for="descriptionCreating" class="form-label">Описание</label>
+                            <textarea id="descriptionCreating" class="form-control" v-model="newDescription"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deadlineCreating" class="form-label">Дэдлайн</label>
+                            <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
         <div class="col text-center">
             <p>Тестирование</p>
@@ -127,9 +157,25 @@ Vue.component('cols', {
             if(this.newTitle && this.newDescription && this.newDeadline && this.newDate) {
                 card.title = this.newTitle
                 card.description = this.newDescription
-                card.date = this.newDate
                 card.deadline = this.newDeadline
                 card.editable = false
+                card.editDate = this.newDate
+            }
+        },
+        startDrag(event, card){
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+            event.dataTransfer.setData('cardID', card.id)
+        },
+        onDrop(event) {
+            let cardID = event.dataTransfer.getData('cardID')
+            cardID = Number(cardID)
+            console.log(cardID)
+            for(let i in this.col1){
+                if(this.col1[i].id === cardID){
+                    this.col2.push(this.col1[i])
+                    console.log(this.col2)
+                }
             }
         }
     },
