@@ -67,8 +67,8 @@ Vue.component('cols', {
                 <p>Описание: {{card.description}}</p>
                 <p>Дата создания: {{card.date}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
-                <button type="submit" class="btn btn-outline-primary" @click="enableEditing">Редактировать</button>
-                <button type="submit" class="btn btn-outline-danger" @click="deleteCard">Удалить</button>
+                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
+                <button type="submit" class="btn btn-outline-danger" @click="deleteCard(card)">Удалить</button>
                 <div v-if="card.editable == true">
                     <form @submit.prevent="saveEdit">
                         <div class="mb-3">
@@ -84,7 +84,7 @@ Vue.component('cols', {
                             <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
                         </div>
                         <div class="mb-3">
-                            <button type="submit" class="btn btn-success">Подтвердить</button>
+                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
                         </div>
                     </form>
                 </div>
@@ -114,42 +114,22 @@ Vue.component('cols', {
         }
     },
     methods: {
-        deleteCard() {
-            for(let i in this.col1){
-                let index = this.col1.findIndex(el => el.id === this.col1[i].id)
-                this.col1.splice(index, 1)
-            }
+        deleteCard(card) {
+            let index = this.col1.findIndex(el => el.id === card.id)
+            this.col1.splice(index, 1)
         },
-        enableEditing() {
-            for(let i in this.col1){
-                let index = this.col1.findIndex(el => el.id === this.col1[i].id)
-                if(this.col1[i].id === index){
-                    this.col1[i].editable = !this.col1[i].editable
-                    console.log(this.col1[i].editable)
-                }
-            }
+        enableEditing(card) {
+            card.editable = !card.editable
         },
         saveEdit(card) {
             let date = new Date()
             this.newDate = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
             if(this.newTitle && this.newDescription && this.newDeadline && this.newDate) {
-                let editCard = {
-                    newTitle: this.newTitle,
-                    newDescription: this.newDescription,
-                    newDate: this.newDate,
-                    newDeadline: this.newDeadline
-                }
-                for(let i in this.col1){
-                    this.col1[i].title = this.newTitle
-                    this.col1[i].description = this.newDescription
-                    this.col1[i].date = this.newDate
-                    this.col1[i].deadline = this.newDeadline
-                    this.col1[i].editable = false
-                }
-                this.newTitle = null
-                this.newDate = null
-                this.newDescription = null
-                this.newDeadline = null
+                card.title = this.newTitle
+                card.description = this.newDescription
+                card.date = this.newDate
+                card.deadline = this.newDeadline
+                card.editable = false
             }
         }
     },
