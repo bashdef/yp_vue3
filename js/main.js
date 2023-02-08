@@ -32,23 +32,25 @@ Vue.component('create', {
             editable: false,
             editDate: '',
             cardReturn: false,
-            reason: null
+            reason: null,
+            completeCard: false
         }
     },
     methods: {
         createCard() {
             let date = new Date()
-            this.date = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
-            if(this.title && this.date && this.description && this.deadline){
+            let createDate = date.toISOString().substring(0, 10)
+            if(this.title && this.description && this.deadline){
                 let card = {
-                    date: this.date,
+                    date: createDate,
                     title: this.title,
                     description: this.description,
                     deadline: this.deadline,
                     id: this.id,
                     editable: this.editable,
                     cardReturn: this.cardReturn,
-                    reason: this.reason
+                    reason: this.reason,
+                    completeCard: this.completeCard
                 }
                 eventBus.$emit('create-card', card)
                 this.date = null
@@ -58,7 +60,7 @@ Vue.component('create', {
                 this.id += 1
             }
         }
-    }
+    },
 })
 
 Vue.component('cols', {
@@ -168,8 +170,35 @@ Vue.component('cols', {
                 </div>
             </div>
         </div>
-        <div class="col text-center">
+        <div class="col text-center" @drop="onDropCol4($event)" @dragenter.prevent @dragover.prevent>
             <p>Выполненные задачи</p>
+            <div v-for="card in col4" class="border" v-bind:class="{'border-success': card.completeCard, 'border-danger': !card.completeCard}">
+                <p>Заголовок: {{card.title}}</p>
+                <p>Описание: {{card.description}}</p>
+                <p>Дата создания: {{card.date}}</p>
+                <p>Дэдлайн: {{card.deadline}}</p>
+                <p>Дата изменения: {{card.editDate}}</p>
+                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
+                <div v-if="card.editable == true">
+                    <form @submit.prevent="saveEdit">
+                        <div class="mb-3">
+                            <label for="titleCreating" class="form-label">Заголовок</label>
+                            <input type="text" v-model="newTitle" class="form-control" id="titleCreating">
+                        </div>
+                        <div class="mb-3">
+                            <label for="descriptionCreating" class="form-label">Описание</label>
+                            <textarea id="descriptionCreating" class="form-control" v-model="newDescription"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deadlineCreating" class="form-label">Дэдлайн</label>
+                            <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>     
     `,
@@ -196,7 +225,7 @@ Vue.component('cols', {
         },
         saveEdit(card) {
             let date = new Date()
-            this.newDate = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
+            this.newDate = date.toISOString().substring(0, 10)
             if(this.newTitle && this.newDescription && this.newDeadline && this.newDate) {
                 card.title = this.newTitle
                 card.description = this.newDescription
@@ -222,6 +251,33 @@ Vue.component('cols', {
                 let index = this.col1.findIndex(el => el.id === this.col1[i].id)
                 this.col1.splice(index, 1)
             }
+        },
+        onDropCol4(event) {
+          let cardID = event.dataTransfer.getData('cardID')
+          cardID = Number(cardID)
+          for(let i in this.col3){
+              let createDate = this.col3[i].date.split('-')
+              let deadlineDate = this.col3[i].deadline.split('-')
+              if(Number(createDate[2]) >= Number(deadlineDate[2])){
+                  if(Number(createDate[1]) >= Number(deadlineDate[1])){
+                      if(Number(createDate[0]) >= Number(deadlineDate[0])){
+                          this.col3[i].completeCard = false
+                      } else {
+                          this.col3[i].completeCard = true
+                      }
+                  } else {
+                      this.col3[i].completeCard = true
+                  }
+              } else {
+                  this.col3[i].completeCard = true
+              }
+              console.log(this.col3[i].completeCard)
+              if(this.col3[i].id === cardID){
+                  this.col4.push(this.col3[i])
+              }
+              let index = this.col3.findIndex(el => el.id === this.col3[i].id)
+              this.col3.splice(index, 1)
+          }
         },
         onDropCol3(event) {
             let cardID = event.dataTransfer.getData('cardID')
