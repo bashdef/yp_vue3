@@ -3,14 +3,14 @@ let eventBus = new Vue()
 Vue.component('create', {
     template: `
     <div class="col text-center">
-        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">
             Создать
         </button>
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Редактирование карточки</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Создание карточки</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
@@ -109,10 +109,6 @@ Vue.component('cols', {
                             <label for="descriptionCreating" class="form-label">Описание</label>
                             <textarea id="descriptionCreating" class="form-control" v-model="newDescription"></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="deadlineCreating" class="form-label">Дэдлайн</label>
-                            <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
-                        </div>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -162,10 +158,6 @@ Vue.component('cols', {
                             <label for="descriptionCreating" class="form-label">Описание</label>
                             <textarea id="descriptionCreating" class="form-control" v-model="newDescription"></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="deadlineCreating" class="form-label">Дэдлайн</label>
-                            <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
-                        </div>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -202,11 +194,7 @@ Vue.component('cols', {
                         <div class="mb-3">
                             <label for="descriptionCreating" class="form-label">Описание</label>
                             <textarea id="descriptionCreating" class="form-control" v-model="newDescription"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="deadlineCreating" class="form-label">Дэдлайн</label>
-                            <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
-                        </div>
+                        </div>>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -243,10 +231,6 @@ Vue.component('cols', {
                         <div class="mb-3">
                             <label for="descriptionCreating" class="form-label">Описание</label>
                             <textarea id="descriptionCreating" class="form-control" v-model="newDescription"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="deadlineCreating" class="form-label">Дэдлайн</label>
-                            <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
                         </div>
                       </div>
                       <div class="modal-footer">
