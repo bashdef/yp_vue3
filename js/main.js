@@ -268,10 +268,9 @@ Vue.component('cols', {
         saveEdit(card) {
             let date = new Date()
             this.newDate = date.toISOString().substring(0, 10)
-            if(this.newTitle && this.newDescription && this.newDeadline && this.newDate) {
+            if(this.newTitle && this.newDescription && this.newDate) {
                 card.title = this.newTitle
                 card.description = this.newDescription
-                card.deadline = this.newDeadline
                 card.editable = false
                 card.editDate = this.newDate
             }
