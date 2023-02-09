@@ -3,23 +3,37 @@ let eventBus = new Vue()
 Vue.component('create', {
     template: `
     <div class="col text-center">
-        <form @submit.prevent="createCard">
-            <div class="mb-3">
-                <label for="titleCreating" class="form-label">Заголовок</label>
-                <input type="text" v-model="title" class="form-control" id="titleCreating">
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Создать
+        </button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Редактирование карточки</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                    <label for="titleCreating" class="form-label">Заголовок</label>
+                    <input type="text" v-model="title" class="form-control" id="titleCreating">
+                </div>
+                <div class="mb-3">
+                    <label for="descriptionCreating" class="form-label">Описание</label>
+                    <textarea id="descriptionCreating" class="form-control" v-model="description"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="deadlineCreating" class="form-label">Дэдлайн</label>
+                    <input id="deadlineCreating" class="form-control" type="date" v-model="deadline">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" @click="createCard">Создать</button>
+              </div>
             </div>
-            <div class="mb-3">
-                <label for="descriptionCreating" class="form-label">Описание</label>
-                <textarea id="descriptionCreating" class="form-control" v-model="description"></textarea>
-            </div>
-            <div class="mb-3">
-                <label for="deadlineCreating" class="form-label">Дэдлайн</label>
-                <input id="deadlineCreating" class="form-control" type="date" v-model="deadline">
-            </div>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-success" @click="createCard">Создать</button>
-            </div>
-        </form>
+          </div>
+        </div>
     </div>
     `,
     data() {
@@ -75,10 +89,18 @@ Vue.component('cols', {
                 <p>Дата создания: {{card.date}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
                 <p>Дата изменения: {{card.editDate}}</p>
-                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
                 <button type="submit" class="btn btn-outline-danger" @click="deleteCard(card)">Удалить</button>
-                <div v-if="card.editable == true">
-                    <form @submit.prevent="saveEdit">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Редактировать
+                </button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Редактирование карточки</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
                         <div class="mb-3">
                             <label for="titleCreating" class="form-label">Заголовок</label>
                             <input type="text" v-model="newTitle" class="form-control" id="titleCreating">
@@ -91,10 +113,13 @@ Vue.component('cols', {
                             <label for="deadlineCreating" class="form-label">Дэдлайн</label>
                             <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
                         </div>
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
-                        </div>
-                    </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" @click="saveEdit(card)">Сохранить изменения</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -118,9 +143,17 @@ Vue.component('cols', {
                         </div>
                     </form>
                 </div>
-                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
-                <div v-if="card.editable == true">
-                    <form @submit.prevent="saveEdit">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Редактировать
+                </button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Редактирование карточки</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
                         <div class="mb-3">
                             <label for="titleCreating" class="form-label">Заголовок</label>
                             <input type="text" v-model="newTitle" class="form-control" id="titleCreating">
@@ -133,10 +166,13 @@ Vue.component('cols', {
                             <label for="deadlineCreating" class="form-label">Дэдлайн</label>
                             <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
                         </div>
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
-                        </div>
-                    </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" @click="saveEdit(card)">Сохранить изменения</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -148,9 +184,17 @@ Vue.component('cols', {
                 <p>Дата создания: {{card.date}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
                 <p>Дата изменения: {{card.editDate}}</p>
-                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
-                <div v-if="card.editable == true">
-                    <form @submit.prevent="saveEdit">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Редактировать
+                </button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Редактирование карточки</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
                         <div class="mb-3">
                             <label for="titleCreating" class="form-label">Заголовок</label>
                             <input type="text" v-model="newTitle" class="form-control" id="titleCreating">
@@ -163,10 +207,13 @@ Vue.component('cols', {
                             <label for="deadlineCreating" class="form-label">Дэдлайн</label>
                             <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
                         </div>
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
-                        </div>
-                    </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" @click="saveEdit(card)">Сохранить изменения</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -178,9 +225,17 @@ Vue.component('cols', {
                 <p>Дата создания: {{card.date}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
                 <p>Дата изменения: {{card.editDate}}</p>
-                <button type="submit" class="btn btn-outline-primary" @click="enableEditing(card)">Редактировать</button>
-                <div v-if="card.editable == true">
-                    <form @submit.prevent="saveEdit">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Редактировать
+                </button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Редактирование карточки</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
                         <div class="mb-3">
                             <label for="titleCreating" class="form-label">Заголовок</label>
                             <input type="text" v-model="newTitle" class="form-control" id="titleCreating">
@@ -193,10 +248,13 @@ Vue.component('cols', {
                             <label for="deadlineCreating" class="form-label">Дэдлайн</label>
                             <input id="deadlineCreating" class="form-control" type="date" v-model="newDeadline">
                         </div>
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-success" @click="saveEdit(card)">Подтвердить</button>
-                        </div>
-                    </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" @click="saveEdit(card)">Сохранить изменения</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -233,8 +291,6 @@ Vue.component('cols', {
                 card.editable = false
                 card.editDate = this.newDate
             }
-            console.log(card.deadline)
-            console.log(card.date)
         },
         startDrag(event, card){
             event.dataTransfer.dropEffect = 'move'
